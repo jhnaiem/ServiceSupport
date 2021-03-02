@@ -1,6 +1,7 @@
 package com.example.practiceservice;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
@@ -15,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
 
+    private boolean jobFlag = false;
+    private MyService myService;
     JobScheduler jobScheduler;
 
 
@@ -25,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
 
         jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
 
+        myService = new MyService();
+
+
     }
 
     public void stop(View view) {
@@ -34,8 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void start(View view) {
 
-        //startService(new Intent(this,MyService.class));
-        startJob();
+        startService(new Intent(this, MyService.class));
 
     }
 

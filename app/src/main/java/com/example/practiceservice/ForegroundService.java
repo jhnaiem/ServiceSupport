@@ -20,7 +20,6 @@ import androidx.core.app.NotificationCompat;
 public class ForegroundService extends Service {
 
     private static final String TAG = ForegroundService.class.getSimpleName();
-
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
 
 
@@ -59,6 +58,7 @@ public class ForegroundService extends Service {
         startForeground(1, notification);
 
 
+        startService(new Intent(this, MyService.class));
         foregroundRunningFlag = true;
         Log.i(TAG, "Foreground Service is running");
 
@@ -83,8 +83,16 @@ public class ForegroundService extends Service {
     }
 
 
+    public void stopService() {
+        stopSelf();
+        Log.i(TAG, "Foreground service is Stoppeddddddddd");
+
+
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.i(TAG, "Foreground service is killed");
     }
 }
