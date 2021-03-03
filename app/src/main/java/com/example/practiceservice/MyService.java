@@ -112,9 +112,13 @@ public class MyService extends Service {
         super.onDestroy();
 
         mIsRunning = false;
-       // mediaPlayer.stop();
+        mIsRandomGeneratorOn=false;
+        // mediaPlayer.stop();
         Log.d(TAG, "Service Stopped");
         Toast.makeText(this, "Stopped", Toast.LENGTH_LONG).show();
+        Log.i(TAG,"thread Id: "+Thread.currentThread().getId());
+
+
 
 
     }
