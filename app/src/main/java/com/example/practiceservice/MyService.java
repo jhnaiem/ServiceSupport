@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import java.util.Random;
+
 
 /**
  * The MyService class is the background service that plays alarm
@@ -28,6 +30,12 @@ public class MyService extends Service {
 
     MediaPlayer mediaPlayer;
     private boolean mIsRunning = false;
+    private boolean mIsRandomGeneratorOn;
+
+    private int mRandomNumber;
+    private final int MIN = 0;
+    private final int MAX = 100;
+
 
     private ForegroundService foregroundService = new ForegroundService();
     JobScheduler jobScheduler;
@@ -51,11 +59,12 @@ public class MyService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        mediaPlayer = MediaPlayer.create(this, Settings.System.DEFAULT_ALARM_ALERT_URI);
-        mediaPlayer.setLooping(true);
-        mediaPlayer.start();
-        mIsRunning = true;
+//        mediaPlayer = MediaPlayer.create(this, Settings.System.DEFAULT_ALARM_ALERT_URI);
+//        mediaPlayer.setLooping(true);
+//        mediaPlayer.start();
+//        mIsRunning = true;
 
+        doBackgroundWork();
 
         //Start the jobScheduler
         startJob();
@@ -70,13 +79,41 @@ public class MyService extends Service {
         return START_STICKY;
     }
 
+    private void doBackgroundWork() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mIsRandomGeneratorOn = true;
+
+                startRandomNumberGenerator();
+            }
+        }).start();
+    }
+
+
+    private void startRandomNumberGenerator() {
+        while (mIsRandomGeneratorOn) {
+            try {
+                Thread.sleep(1000);
+                if (mIsRandomGeneratorOn) {
+                    mRandomNumber = new Random().nextInt(MAX) + MIN;
+                    Log.i(TAG, "Thread id: " + Thread.currentThread().getId() + ", Random Number: " + mRandomNumber);
+                }
+            } catch (InterruptedException e) {
+                Log.i(TAG, "Thread Interrupted");
+            }
+        }
+    }
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
 
         mIsRunning = false;
-        mediaPlayer.stop();
-        Log.d(TAG, "Player Stopped");
+       // mediaPlayer.stop();
+        Log.d(TAG, "Service Stopped");
         Toast.makeText(this, "Stopped", Toast.LENGTH_LONG).show();
 
 
