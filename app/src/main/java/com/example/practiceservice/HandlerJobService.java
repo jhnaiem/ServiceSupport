@@ -9,6 +9,10 @@ import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
+/**
+ * The HandlerJobService class is a job that starts the foreground service
+ */
+
 public class HandlerJobService extends JobService {
 
     MyService myService = new MyService();

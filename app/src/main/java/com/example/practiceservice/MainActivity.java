@@ -33,36 +33,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    //No OP
     public void stop(View view) {
         //stopService(new Intent(this,MyService.class));
-        stopJob();
+        //stopJob();
     }
 
     public void start(View view) {
 
         startService(new Intent(this, MyService.class));
-
-    }
-
-
-    private void startJob() {
-
-        ComponentName componentName = new ComponentName(this, HandlerJobService.class);
-
-        JobInfo jobInfo = new JobInfo.Builder(101, componentName)
-                .setPersisted(true)
-                .setPeriodic(15 * 60 * 1000)
-                .setRequiresCharging(false)
-                .build();
-
-
-        if (jobScheduler.schedule(jobInfo) == JobScheduler.RESULT_SUCCESS) {
-            Log.i(TAG, "MainActivity thread id: " + Thread.currentThread().getId() + ", job successfully scheduled");
-
-        } else {
-            Log.i(TAG, "MainActivity thread id: " + Thread.currentThread().getId() + ", job could not be scheduled");
-
-        }
 
     }
 

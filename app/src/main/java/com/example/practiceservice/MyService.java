@@ -14,7 +14,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.lifecycle.MutableLiveData;
+
+
+/**
+ * The MyService class is the background service that plays alarm
+ */
+
 
 public class MyService extends Service {
 
@@ -40,7 +45,6 @@ public class MyService extends Service {
         Toast.makeText(this, "Created", Toast.LENGTH_LONG).show();
         jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
 
-
         super.onCreate();
     }
 
@@ -52,15 +56,17 @@ public class MyService extends Service {
         mediaPlayer.start();
         mIsRunning = true;
 
+
+        //Start the jobScheduler
         startJob();
 
         Toast.makeText(this, "Running", Toast.LENGTH_LONG).show();
 
+        //If the Foreground service is running then stop it
         if (isMyServiceRunning(ForegroundService.class)) {
             foregroundService.stopService();
-
         }
-        //Add logic to kill foreground
+
         return START_STICKY;
     }
 
@@ -76,11 +82,8 @@ public class MyService extends Service {
 
     }
 
-    public boolean ismIsRunning() {
-        return mIsRunning;
-    }
 
-
+    //TO check if a service is running or not
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -91,6 +94,8 @@ public class MyService extends Service {
         return false;
     }
 
+
+    //Method to start the jobScheduler
     private void startJob() {
 
         ComponentName componentName = new ComponentName(this, HandlerJobService.class);

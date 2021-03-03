@@ -16,14 +16,16 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+/**
+ * The Foreground class is used to show notification and start the background service(MyService)
+ */
+
 
 public class ForegroundService extends Service {
 
     private static final String TAG = ForegroundService.class.getSimpleName();
     public static final String CHANNEL_ID = "ForegroundServiceChannel";
 
-
-    private boolean foregroundRunningFlag = false;
 
     @Nullable
     @Override
@@ -58,13 +60,11 @@ public class ForegroundService extends Service {
         startForeground(1, notification);
 
 
+        //Re Start the background service(MyService)
         startService(new Intent(this, MyService.class));
-        foregroundRunningFlag = true;
+
         Log.i(TAG, "Foreground Service is running");
 
-
-        //
-        //startService(new Intent(this, MyService.class));
 
         return START_NOT_STICKY;
     }
@@ -83,6 +83,7 @@ public class ForegroundService extends Service {
     }
 
 
+    //TO stop the foreground service
     public void stopService() {
         stopSelf();
         Log.i(TAG, "Foreground service is Stoppeddddddddd");
@@ -93,6 +94,6 @@ public class ForegroundService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.i(TAG, "Foreground service is killed");
+        Log.i(TAG, "Foreground service is Destroyed");
     }
 }
