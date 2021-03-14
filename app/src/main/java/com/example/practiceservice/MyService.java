@@ -1,5 +1,6 @@
 package com.example.practiceservice;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Service;
 import android.app.job.JobInfo;
@@ -15,6 +16,11 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Random;
 
 
@@ -31,12 +37,14 @@ public class MyService extends Service {
     MediaPlayer mediaPlayer;
     private boolean mIsRunning = false;
     private boolean mIsRandomGeneratorOn;
+    StringBuilder stringBuilder = new StringBuilder();
 
     private int mRandomNumber;
     private final int MIN = 0;
     private final int MAX = 100;
 
 
+    // Need it ?????
     private ForegroundService foregroundService = new ForegroundService();
     JobScheduler jobScheduler;
 
@@ -50,7 +58,7 @@ public class MyService extends Service {
 
     @Override
     public void onCreate() {
-        Toast.makeText(this, "Created", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Created", Toast.LENGTH_LONG).show();
         jobScheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
 
         super.onCreate();
@@ -64,19 +72,33 @@ public class MyService extends Service {
 //        mediaPlayer.start();
 //        mIsRunning = true;
 
+        doLogPassWork("MyService(Background) Service Started Running");
         doBackgroundWork();
 
         //Start the jobScheduler
         startJob();
 
-        Toast.makeText(this, "Running", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Running", Toast.LENGTH_SHORT).show();
 
         //If the Foreground service is running then stop it
-        if (isMyServiceRunning(ForegroundService.class)) {
-            foregroundService.stopService();
-        }
+//        if (isMyServiceRunning(ForegroundService.class)) {
+//            foregroundService.stopService();
+//        }
 
         return START_STICKY;
+    }
+
+    private void doLogPassWork(String msg) {
+
+        @SuppressLint("SimpleDateFormat") DateFormat df = new SimpleDateFormat("EEE, d MMM yyyy, HH:mm");
+        String date = df.format(Calendar.getInstance().getTime());
+
+        stringBuilder.append(date +" "+ msg +"\n");
+
+        LogEvent logEvent = new LogEvent();
+        logEvent.setLogMessage(stringBuilder.toString());
+
+        EventBus.getDefault().postSticky(logEvent);
     }
 
     private void doBackgroundWork() {
@@ -114,8 +136,9 @@ public class MyService extends Service {
         mIsRunning = false;
         mIsRandomGeneratorOn=false;
         // mediaPlayer.stop();
+        doLogPassWork("Background Service is stopped");
         Log.d(TAG, "Service Stopped");
-        Toast.makeText(this, "Stopped", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Stopped", Toast.LENGTH_LONG).show();
         Log.i(TAG,"thread Id: "+Thread.currentThread().getId());
 
 
@@ -149,10 +172,12 @@ public class MyService extends Service {
 
 
         if (jobScheduler.schedule(jobInfo) == JobScheduler.RESULT_SUCCESS) {
-            Log.i(TAG, "MainActivity thread id: " + Thread.currentThread().getId() + ", job successfully scheduled");
+
+            doLogPassWork(TAG + " (BackgroundService) Thread id:" + Thread.currentThread().getId() + ", job successfully scheduled");
+            Log.i(TAG, " thread id: " + Thread.currentThread().getId() + ", job successfully scheduled");
 
         } else {
-            Log.i(TAG, "MainActivity thread id: " + Thread.currentThread().getId() + ", job could not be scheduled");
+            Log.i(TAG, " Thread id: " + Thread.currentThread().getId() + ", job could not be scheduled");
 
         }
 
